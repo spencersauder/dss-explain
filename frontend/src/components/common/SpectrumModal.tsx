@@ -42,46 +42,49 @@ export function SpectrumModal({ open, stage, detail, loading, onClose }: Spectru
       <div className="spectrum-modal">
         <header className="spectrum-header">
           <div>
-            <p className="spectrum-subtitle">Stage</p>
+            <p className="spectrum-subtitle">Участок</p>
             <h2 className="spectrum-title">{stage.toUpperCase()}</h2>
           </div>
-          <button
-            onClick={onClose}
-            className="ghost-button"
-          >
-            Close
+          <button type="button" onClick={onClose} className="ghost-button">
+            Закрыть
           </button>
         </header>
-        {loading && <p className="muted-text">Loading spectra...</p>}
+        {loading && <p className="muted-text">Загружаем спектр...</p>}
         {!loading && detail && (
           <div className="spectrum-grid">
-            <ChartPanel title="Amplitude Spectrum" xLabel="Frequency (Hz)">
+            <ChartPanel title="Амплитудный спектр" xLabel="Частота, Гц">
               <ResponsiveContainer width="100%" height={240}>
                 <LineChart data={spectrumData} margin={{ top: 10, left: 10, right: 10, bottom: 10 }}>
                   <XAxis
                     dataKey="freq"
-                    tickFormatter={(value) => `${(value / 1e6).toFixed(2)}M`}
+                    tickFormatter={(value) => `${(value / 1e6).toFixed(2)} МГц`}
                     stroke="#94a3b8"
                   />
                   <YAxis stroke="#94a3b8" tickFormatter={(value) => value.toExponential(1)} />
-                  <Tooltip formatter={(value: number) => value.toPrecision(3)} labelFormatter={(label) => `${label.toFixed(0)} Hz`} />
+                  <Tooltip
+                    formatter={(value: number) => value.toPrecision(3)}
+                    labelFormatter={(label) => `${label.toFixed(0)} Гц`}
+                  />
                   <Line type="monotone" dataKey="magnitude" stroke="#6366f1" dot={false} strokeWidth={2} />
                 </LineChart>
               </ResponsiveContainer>
             </ChartPanel>
-            <ChartPanel title="Waveform" xLabel="Time (s)">
+            <ChartPanel title="Форма сигнала" xLabel="Время, с">
               <ResponsiveContainer width="100%" height={240}>
                 <LineChart data={waveformData} margin={{ top: 10, left: 10, right: 10, bottom: 10 }}>
                   <XAxis dataKey="time" stroke="#94a3b8" tickFormatter={(value) => value.toFixed(3)} />
                   <YAxis stroke="#94a3b8" domain={['auto', 'auto']} />
-                  <Tooltip formatter={(value: number) => value.toFixed(3)} labelFormatter={(label) => `${label.toFixed(4)} s`} />
+                  <Tooltip
+                    formatter={(value: number) => value.toFixed(3)}
+                    labelFormatter={(label) => `${label.toFixed(4)} с`}
+                  />
                   <Line type="linear" dataKey="value" stroke="#0ea5e9" dot={false} strokeWidth={1.5} />
                 </LineChart>
               </ResponsiveContainer>
             </ChartPanel>
           </div>
         )}
-        {!loading && !detail && <p className="text-sm text-rose-500">Failed to fetch spectrum.</p>}
+        {!loading && !detail && <p className="text-sm text-rose-500">Не получилось получить спектр.</p>}
       </div>
     </div>
   );

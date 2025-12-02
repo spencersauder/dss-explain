@@ -48,23 +48,40 @@ function App() {
     <div className="app-shell">
       <header className="hero">
         <div>
-          <p className="hero-label">DSSS Link Explorer</p>
-          <h1>Visualize transmitter/receiver stages with live spectra</h1>
+          <p className="hero-label">Тракт DSSS</p>
+          <h1>Наглядная схема передатчика и приёмника</h1>
           <p className="hero-subtitle">
-            Encode a message with a secret phrase, push it over an AWGN channel, and analyze how spreading protects the
-            payload at each tap of the chain.
+            Задайте секретные фразы и параметры канала, запустите передачу и изучайте, как сигнал расширяет и сужает
+            спектр на каждом блоке.
           </p>
         </div>
       </header>
-      <main className="layout">
-        <section className="panel">
-          <h2>Transmitter</h2>
+      <main className="workspace">
+        <section className="panel panel--diagram">
+          <div className="panel-heading">
+            <h2>Схема тракта</h2>
+            <p>Главные узлы отображены слева направо — нажмите любой блок, чтобы увидеть его спектр.</p>
+          </div>
+          <TransceiverDiagram
+            stages={availableStages}
+            onInspect={handleStageInspect}
+            stageLoading={stageLoading}
+            decodedMessage={result?.decoded_message}
+            mismatch={result?.mismatch}
+            canInspect={Boolean(result)}
+          />
+        </section>
+        <section className="panel panel--controls">
+          <div className="panel-heading">
+            <h2>Параметры передачи</h2>
+            <p>Сообщение и секреты задаются в текстовых полях, остальные параметры — числовые.</p>
+          </div>
           <div className="form-grid">
-            <FormField label="Payload message" name="message" value={form.message} onChange={handleInputChange} textarea />
-            <FormField label="TX secret phrase" name="tx_secret" value={form.tx_secret} onChange={handleInputChange} />
-            <FormField label="RX secret phrase" name="rx_secret" value={form.rx_secret} onChange={handleInputChange} />
+            <FormField label="Сообщение" name="message" value={form.message} onChange={handleInputChange} textarea />
+            <FormField label="Секрет на передаче" name="tx_secret" value={form.tx_secret} onChange={handleInputChange} />
+            <FormField label="Секрет на приёме" name="rx_secret" value={form.rx_secret} onChange={handleInputChange} />
             <FormField
-              label="Chip rate (chips/s)"
+              label="Частота чипов (chip/s)"
               name="chip_rate"
               type="number"
               min={10_000}
@@ -74,7 +91,7 @@ function App() {
               onChange={handleInputChange}
             />
             <FormField
-              label="Carrier frequency (Hz)"
+              label="Несущая (Гц)"
               name="carrier_freq"
               type="number"
               min={100_000}
@@ -84,20 +101,21 @@ function App() {
               onChange={handleInputChange}
             />
             <label className="form-field">
-              <span className="form-label">Noise power</span>
+              <span className="form-label">Мощность помех (σ²)</span>
               <input
                 type="range"
                 min={0}
-                max={5}
-                step={0.1}
+                max={20}
+                step={0.5}
                 name="noise_power"
                 value={form.noise_power}
                 onChange={handleInputChange}
               />
               <span className="slider-value">{form.noise_power.toFixed(1)}</span>
+              <span className="slider-hint">Высокие значения создают заметные искажения текста.</span>
             </label>
             <label className="form-field">
-              <span className="form-label">Oversampling</span>
+              <span className="form-label">Передискретизация</span>
               <select name="oversampling" value={form.oversampling} onChange={handleInputChange}>
                 {[4, 8, 16, 32].map((value) => (
                   <option key={value} value={value}>
@@ -108,33 +126,21 @@ function App() {
             </label>
           </div>
           <button className="primary-button" onClick={runSimulation} disabled={loading}>
-            {loading ? 'Simulating...' : 'Transmit & capture'}
+            {loading ? 'Передаём...' : 'Запустить передачу'}
           </button>
-          {error && <p className="error-text">{error}</p>}
+          {error && <p className="error-text">Ошибка симуляции: {error}</p>}
           {result?.inline_spectra && (
             <div className="inline-spectra">
-              <h3>Inline spectra</h3>
+              <h3>Буфер спектров</h3>
               <ul>
                 {result.inline_spectra.map((snapshot) => (
                   <li key={snapshot.stage}>
-                    {snapshot.stage} - {snapshot.frequencies.length} bins
+                    {snapshot.stage} - {snapshot.frequencies.length} точек
                   </li>
                 ))}
               </ul>
             </div>
           )}
-        </section>
-
-        <section className="panel">
-          <h2>Signal flow</h2>
-          <TransceiverDiagram
-            stages={availableStages}
-            onInspect={handleStageInspect}
-            stageLoading={stageLoading}
-            decodedMessage={result?.decoded_message}
-            mismatch={result?.mismatch}
-            canInspect={Boolean(result)}
-          />
         </section>
       </main>
       <SpectrumModal

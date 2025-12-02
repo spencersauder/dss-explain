@@ -30,7 +30,7 @@ interface SimulationState {
 }
 
 const initialForm: SimulationFormValues = {
-  message: 'Hello, DSSS!',
+  message: 'Привет, DSSS!',
   tx_secret: 'TX-SECRET',
   rx_secret: 'TX-SECRET',
   chip_rate: 100_000,
@@ -54,7 +54,7 @@ export const useSimulationStore = create<SimulationState>((set, get) => ({
       const response = await simulate(payload);
       set({ result: response, stageDetails: {}, loading: false });
     } catch (error) {
-      set({ error: error instanceof Error ? error.message : 'Simulation failed', loading: false });
+      set({ error: error instanceof Error ? error.message : 'Ошибка моделирования', loading: false });
     }
   },
   loadStageDetail: async (stage: StageName) => {
@@ -71,7 +71,10 @@ export const useSimulationStore = create<SimulationState>((set, get) => ({
       }));
       return detail;
     } catch (error) {
-      set({ error: error instanceof Error ? error.message : 'Failed to load stage data', stageLoading: undefined });
+      set({
+        error: error instanceof Error ? error.message : 'Не удалось загрузить данные участка',
+        stageLoading: undefined,
+      });
       return undefined;
     }
   },
