@@ -111,6 +111,11 @@ body {
   color: #0f172a;
 }
 
+.form-hint {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
 .form-input,
 .form-field textarea,
 .form-field select {
@@ -343,6 +348,11 @@ body {
   align-items: center;
 }
 
+.spectrum-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
 .spectrum-subtitle {
   text-transform: uppercase;
   font-size: 0.7rem;
@@ -384,6 +394,87 @@ body {
   font-size: 0.7rem;
   color: #94a3b8;
   margin-top: 0.5rem;
+}
+
+.spectrum-compare {
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  border: 1px dashed #0f172a;
+  border-radius: 16px;
+  background: #fff;
+}
+
+.spectrum-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.spectrum-label {
+  width: 140px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.spectrum-bar {
+  position: relative;
+  flex: 1;
+  height: 28px;
+  border-radius: 999px;
+  background: #e2e8f0;
+  overflow: hidden;
+}
+
+.spectrum-bar__noise,
+.spectrum-bar__signal {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.spectrum-bar__noise {
+  background: rgba(239, 68, 68, 0.4);
+}
+
+.spectrum-bar__signal {
+  background: rgba(59, 130, 246, 0.7);
+}
+
+.spectrum-legend {
+  display: flex;
+  gap: 1.5rem;
+  font-size: 0.85rem;
+  color: #475569;
+}
+
+.legend-dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  margin-right: 0.35rem;
+}
+
+.legend-dot--signal {
+  background: rgba(59, 130, 246, 0.9);
+}
+
+.legend-dot--noise {
+  background: rgba(239, 68, 68, 0.7);
+}
+
+.code-block {
+  margin-top: 1rem;
+  background: #0f172a;
+  color: #e2e8f0;
+  padding: 1rem;
+  border-radius: 16px;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.85rem;
+  overflow-x: auto;
+  line-height: 1.4;
 }
 
 @media (max-width: 640px) {

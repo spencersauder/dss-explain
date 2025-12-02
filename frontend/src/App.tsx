@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react';
 import './App.css';
 import type { StageName } from './api/types';
 import { FormField } from './components/common/FormField';
+import { SpectrumComparison } from './components/common/SpectrumComparison';
 import { SpectrumModal } from './components/common/SpectrumModal';
 import { TransceiverDiagram } from './components/transceiver/TransceiverDiagram';
 import type { SimulationFormValues } from './state/simulationStore';
@@ -70,6 +71,11 @@ function App() {
             mismatch={result?.mismatch}
             canInspect={Boolean(result)}
           />
+          <SpectrumComparison
+            chipRate={form.chip_rate}
+            noisePower={form.noise_power}
+            secretLength={form.tx_secret.length}
+          />
         </section>
         <section className="panel panel--controls">
           <div className="panel-heading">
@@ -78,8 +84,20 @@ function App() {
           </div>
           <div className="form-grid">
             <FormField label="Сообщение" name="message" value={form.message} onChange={handleInputChange} textarea />
-            <FormField label="Секрет на передаче" name="tx_secret" value={form.tx_secret} onChange={handleInputChange} />
-            <FormField label="Секрет на приёме" name="rx_secret" value={form.rx_secret} onChange={handleInputChange} />
+            <FormField
+              label="Секрет на передаче"
+              name="tx_secret"
+              value={form.tx_secret}
+              onChange={handleInputChange}
+              hint="Минимум 4 символа"
+            />
+            <FormField
+              label="Секрет на приёме"
+              name="rx_secret"
+              value={form.rx_secret}
+              onChange={handleInputChange}
+              hint="Минимум 4 символа"
+            />
             <FormField
               label="Частота чипов (chip/s)"
               name="chip_rate"
@@ -144,6 +162,7 @@ function App() {
         </section>
       </main>
       <SpectrumModal
+        key={modalStage ?? 'none'}
         open={Boolean(modalStage)}
         stage={modalStage}
         detail={modalStage ? stageDetails[modalStage] : undefined}

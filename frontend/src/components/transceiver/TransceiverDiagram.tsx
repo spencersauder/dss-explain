@@ -17,13 +17,13 @@ const STAGE_META: Record<
   },
   modulator: {
     title: 'Фильтр основной полосы',
-    description: 'Формирование базового сигнала',
-    annotation: 'Baseband',
+    description: 'Формирование сигнала основной полосы',
+    annotation: 'Основная полоса',
   },
   channel: {
     title: 'Модулятор / канал',
     description: 'Перемножение с несущей + шум',
-    annotation: 'AWGN',
+    annotation: 'Канал с шумом',
   },
   correlator: {
     title: 'Коррелятор',

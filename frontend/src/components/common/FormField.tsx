@@ -10,6 +10,7 @@ interface FormFieldProps {
   max?: number;
   step?: number;
   textarea?: boolean;
+  hint?: string;
 }
 
 export function FormField({
@@ -22,6 +23,7 @@ export function FormField({
   max,
   step,
   textarea = false,
+  hint,
 }: FormFieldProps) {
   const commonProps = {
     name,
@@ -37,6 +39,7 @@ export function FormField({
     <label className="form-field">
       <span className="form-label">{label}</span>
       {textarea ? <textarea rows={3} {...commonProps} /> : <input type={type} {...commonProps} />}
+      {hint && <span className="form-hint">{hint}</span>}
     </label>
   );
 }

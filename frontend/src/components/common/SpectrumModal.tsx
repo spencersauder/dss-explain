@@ -1,4 +1,4 @@
-import { useMemo, type ReactNode } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import {
   Line,
   LineChart,
@@ -9,6 +9,29 @@ import {
 } from 'recharts';
 import type { StageDetailResponse, StageName } from '../../api/types';
 
+const STAGE_SNIPPETS: Record<StageName, string> = {
+  source: `# Источник
+bits = _text_to_bits(message_bytes)
+waveform = _build_source_waveform(bits, chips_per_bit * oversampling)`,
+  spreader: `# Расширение спектра
+tx_prn = _generate_prn(tx_secret, chips_per_bit)
+chip_waveform = _repeat(_spread_bits(bits, tx_prn, chips_per_bit), oversampling)`,
+  modulator: `# Модуляция базового сигнала
+time = np.arange(chip_waveform.size) / sample_rate
+carrier = np.cos(2 * np.pi * carrier_freq * time)
+tx_signal = chip_waveform * carrier`,
+  channel: `# Канал с шумом
+channel_output = _awgn(tx_signal, noise_power)`,
+  correlator: `# Коррелятор приёмника
+rx_demod = channel_output * carrier
+rx_chips = _chunk_mean(rx_demod, oversampling)
+despread = rx_chips * np.tile(rx_prn, len(bits) or 1)`,
+  decoder: `# Принятие решения по битам
+bit_metrics = _chunk_mean(despread, chips_per_bit)
+recovered_bits = (bit_metrics > 0).astype(np.uint8)
+decoded = _bits_to_text(recovered_bits, expected_bytes)`,
+};
+
 interface SpectrumModalProps {
   open: boolean;
   stage: StageName | null;
@@ -18,6 +41,8 @@ interface SpectrumModalProps {
 }
 
 export function SpectrumModal({ open, stage, detail, loading, onClose }: SpectrumModalProps) {
+  const [codeVisible, setCodeVisible] = useState(false);
+
   const spectrumData = useMemo(() => {
     if (!detail) return [];
     return detail.spectrum.frequencies.map((freq, index) => ({
@@ -37,6 +62,11 @@ export function SpectrumModal({ open, stage, detail, loading, onClose }: Spectru
 
   if (!open || !stage) return null;
 
+  const handleClose = () => {
+    setCodeVisible(false);
+    onClose();
+  };
+
   return (
     <div className="spectrum-backdrop">
       <div className="spectrum-modal">
@@ -45,9 +75,14 @@ export function SpectrumModal({ open, stage, detail, loading, onClose }: Spectru
             <p className="spectrum-subtitle">Участок</p>
             <h2 className="spectrum-title">{stage.toUpperCase()}</h2>
           </div>
-          <button type="button" onClick={onClose} className="ghost-button">
-            Закрыть
-          </button>
+          <div className="spectrum-actions">
+            <button type="button" onClick={() => setCodeVisible((prev) => !prev)} className="ghost-button">
+              {codeVisible ? 'Скрыть код' : 'Показать код'}
+            </button>
+            <button type="button" onClick={handleClose} className="ghost-button">
+              Закрыть
+            </button>
+          </div>
         </header>
         {loading && <p className="muted-text">Загружаем спектр...</p>}
         {!loading && detail && (
@@ -85,6 +120,11 @@ export function SpectrumModal({ open, stage, detail, loading, onClose }: Spectru
           </div>
         )}
         {!loading && !detail && <p className="text-sm text-rose-500">Не получилось получить спектр.</p>}
+        {codeVisible && stage && (
+          <div className="code-block">
+            <pre>{STAGE_SNIPPETS[stage]}</pre>
+          </div>
+        )}
       </div>
     </div>
   );
