@@ -46,7 +46,9 @@ async def run_simulation(payload: SimulationRequest) -> SimulationResponse:
             chip_rate=payload.chip_rate,
             carrier_freq=payload.carrier_freq,
             noise_power=payload.noise_power,
+            noise_bandwidth=payload.noise_bandwidth,
             oversampling=payload.oversampling,
+            coding_scheme=payload.coding_scheme,
         )
     except ValueError as exc:  # pragma: no cover - fast path
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
@@ -61,6 +63,8 @@ async def run_simulation(payload: SimulationRequest) -> SimulationResponse:
         simulation_id=result.simulation_id,
         decoded_message=result.decoded_message,
         mismatch=result.mismatch,
+        coding_scheme=payload.coding_scheme,
+        noise_bandwidth=payload.noise_bandwidth,
         available_stages=list(result.stages.keys()),
         inline_spectra=inline or None,
     )

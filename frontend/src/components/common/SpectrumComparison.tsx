@@ -1,14 +1,14 @@
 interface SpectrumComparisonProps {
   chipRate: number;
   noisePower: number;
+  noiseBandwidth: number;
   secretLength: number;
 }
 
-export function SpectrumComparison({ chipRate, noisePower, secretLength }: SpectrumComparisonProps) {
+export function SpectrumComparison({ chipRate, noisePower, noiseBandwidth, secretLength }: SpectrumComparisonProps) {
   const chipsPerBit = Math.max(8, secretLength * 4);
   const basebandWidth = chipRate;
   const spreadWidth = chipRate * chipsPerBit;
-  const noiseBandwidth = (noisePower + 1) * 50_000;
   const maxWidth = Math.max(spreadWidth, noiseBandwidth, basebandWidth, 1);
 
   const toPercent = (value: number) => `${Math.min(100, (value / maxWidth) * 100).toFixed(2)}%`;
@@ -35,7 +35,8 @@ export function SpectrumComparison({ chipRate, noisePower, secretLength }: Spect
           {Math.round(spreadWidth / 1000)} кГц)
         </span>
         <span>
-          <span className="legend-dot legend-dot--noise" />Полоса шума (σ² = {noisePower.toFixed(1)})
+          <span className="legend-dot legend-dot--noise" />Полоса шума ≈ {Math.round(noiseBandwidth / 1000)} кГц, уровень σ² ={' '}
+          {noisePower.toFixed(1)}
         </span>
       </div>
     </div>

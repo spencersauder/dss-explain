@@ -44,6 +44,7 @@ interface TransceiverDiagramProps {
   decodedMessage?: string;
   mismatch?: boolean;
   canInspect: boolean;
+  codingScheme?: string;
 }
 
 export function TransceiverDiagram({
@@ -53,6 +54,7 @@ export function TransceiverDiagram({
   decodedMessage,
   mismatch,
   canInspect,
+  codingScheme,
 }: TransceiverDiagramProps) {
   return (
     <div className="diagram-plane">
@@ -90,7 +92,15 @@ export function TransceiverDiagram({
             {mismatch ? 'Секреты не совпали, данные искажены' : 'Секреты совпали, полезная нагрузка восстановлена'}
           </p>
         )}
+        {codingScheme && <p className="receiver-panel__status">Кодирование: {CODING_LABELS[codingScheme] ?? codingScheme}</p>}
       </div>
     </div>
   );
 }
+
+const CODING_LABELS: Record<string, string> = {
+  nrz: 'NRZ',
+  manchester: 'Манчестер',
+  rep3: 'Повторение ×3',
+  hamming74: 'Hamming (7,4)',
+};

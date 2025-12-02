@@ -14,6 +14,7 @@ const NUMERIC_FIELDS: Array<keyof SimulationFormValues> = [
   'chip_rate',
   'carrier_freq',
   'noise_power',
+  'noise_bandwidth',
   'oversampling',
 ];
 
@@ -70,10 +71,12 @@ function App() {
             decodedMessage={result?.decoded_message}
             mismatch={result?.mismatch}
             canInspect={Boolean(result)}
+            codingScheme={result?.coding_scheme}
           />
           <SpectrumComparison
             chipRate={form.chip_rate}
             noisePower={form.noise_power}
+            noiseBandwidth={form.noise_bandwidth}
             secretLength={form.tx_secret.length}
           />
         </section>
@@ -133,6 +136,20 @@ function App() {
               <span className="slider-hint">Высокие значения создают заметные искажения текста.</span>
             </label>
             <label className="form-field">
+              <span className="form-label">Ширина спектра помех (Гц)</span>
+              <input
+                type="range"
+                min={5_000}
+                max={500_000}
+                step={5_000}
+                name="noise_bandwidth"
+                value={form.noise_bandwidth}
+                onChange={handleInputChange}
+              />
+              <span className="slider-value">{(form.noise_bandwidth / 1000).toFixed(0)} кГц</span>
+              <span className="slider-hint">Сравнивайте перекрытие и по ширине, и по уровню спектра.</span>
+            </label>
+            <label className="form-field">
               <span className="form-label">Передискретизация</span>
               <select name="oversampling" value={form.oversampling} onChange={handleInputChange}>
                 {[4, 8, 16, 32].map((value) => (
@@ -141,6 +158,18 @@ function App() {
                   </option>
                 ))}
               </select>
+            </label>
+            <label className="form-field">
+              <span className="form-label">Кодирование</span>
+              <select name="coding_scheme" value={form.coding_scheme} onChange={handleInputChange}>
+                <option value="nrz">NRZ (базовый)</option>
+                <option value="manchester">Манчестер</option>
+                <option value="rep3">Повторение ×3</option>
+                <option value="hamming74">Hamming (7,4)</option>
+              </select>
+              <span className="form-hint">
+                Сравните, какая схема лучше восстанавливает сигнал при перекрытии помехой.
+              </span>
             </label>
           </div>
           <button className="primary-button" onClick={runSimulation} disabled={loading}>

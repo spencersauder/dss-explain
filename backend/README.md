@@ -29,7 +29,9 @@ API будет доступен по адресу `http://localhost:8000/api`.
   "chip_rate": 100000.0,
   "carrier_freq": 1000000.0,
   "noise_power": 0.25,
-  "oversampling": 8
+  "noise_bandwidth": 20000.0,
+  "oversampling": 8,
+  "coding_scheme": "hamming74"
 }
 ```
 
@@ -40,6 +42,8 @@ API будет доступен по адресу `http://localhost:8000/api`.
   "simulation_id": "...",
   "decoded_message": "Hello, DSSS!",
   "mismatch": false,
+  "coding_scheme": "hamming74",
+  "noise_bandwidth": 20000.0,
   "available_stages": ["source", "spreader", "modulator", "channel", "correlator", "decoder"],
   "inline_spectra": [
     {

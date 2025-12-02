@@ -1,5 +1,7 @@
+import numpy as np
+
 from app.dsss_engine import DSSSEngine
-from app.schemas import StageName
+from app.schemas import CodingScheme, StageName
 
 
 def test_simulation_round_trip():
@@ -11,7 +13,9 @@ def test_simulation_round_trip():
         chip_rate=50_000,
         carrier_freq=500_000,
         noise_power=0.0,
+        noise_bandwidth=20_000,
         oversampling=4,
+        coding_scheme=CodingScheme.NRZ,
     )
 
     assert result.decoded_message == "HELLO DSSS"
@@ -30,8 +34,18 @@ def test_secret_mismatch_flags_error():
         chip_rate=50_000,
         carrier_freq=500_000,
         noise_power=0.0,
+        noise_bandwidth=20_000,
         oversampling=4,
+        coding_scheme=CodingScheme.NRZ,
     )
 
     assert result.mismatch is True
     assert result.decoded_message != "HELLO DSSS"
+
+
+def test_hamming_encoder_decoder_round_trip():
+    engine = DSSSEngine()
+    bits = np.array([1, 0, 1, 1, 0, 1, 0, 0], dtype=np.uint8)
+    encoded, meta = engine._encode_bits(bits, CodingScheme.HAMMING74)
+    recovered = engine._decode_bits(encoded, CodingScheme.HAMMING74, meta)
+    assert np.array_equal(recovered, bits)

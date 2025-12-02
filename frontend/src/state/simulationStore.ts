@@ -14,7 +14,9 @@ export interface SimulationFormValues {
   chip_rate: number;
   carrier_freq: number;
   noise_power: number;
+  noise_bandwidth: number;
   oversampling: number;
+  coding_scheme: SimulationRequest['coding_scheme'];
 }
 
 interface SimulationState {
@@ -36,7 +38,9 @@ const initialForm: SimulationFormValues = {
   chip_rate: 100_000,
   carrier_freq: 1_000_000,
   noise_power: 0.0,
+  noise_bandwidth: 20_000,
   oversampling: 8,
+  coding_scheme: 'nrz',
 };
 
 export const useSimulationStore = create<SimulationState>((set, get) => ({

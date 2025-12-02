@@ -19,6 +19,8 @@ export interface WaveformSnapshot {
   sample_rate: number;
 }
 
+export type CodingScheme = 'nrz' | 'manchester' | 'rep3' | 'hamming74';
+
 export interface SimulationRequest {
   message: string;
   tx_secret: string;
@@ -26,13 +28,17 @@ export interface SimulationRequest {
   chip_rate: number;
   carrier_freq: number;
   noise_power: number;
+  noise_bandwidth: number;
   oversampling: number;
+  coding_scheme: CodingScheme;
 }
 
 export interface SimulationResponse {
   simulation_id: string;
   decoded_message: string;
   mismatch: boolean;
+  coding_scheme: CodingScheme;
+  noise_bandwidth: number;
   available_stages: StageName[];
   inline_spectra?: SpectrumSnapshot[] | null;
 }
