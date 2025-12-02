@@ -50,8 +50,8 @@ class SimulationRequest(BaseModel):
     rx_secret: str = Field(..., min_length=4, max_length=64)
     chip_rate: float = Field(1e5, gt=0)
     carrier_freq: float = Field(1e6, gt=0)
-    noise_power: float = Field(0.0, ge=0.0)
-    noise_bandwidth: float = Field(1e5, gt=0, description="Interference bandwidth in Hz")
+    noise_power: float = Field(0.0, ge=0.0, le=100.0)
+    noise_bandwidth: float = Field(5e3, gt=0, description="Interference bandwidth in Hz")
     oversampling: int = Field(8, ge=1, le=64)
     coding_scheme: CodingScheme = CodingScheme.NRZ
 

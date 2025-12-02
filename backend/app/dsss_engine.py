@@ -94,8 +94,8 @@ def _band_limited_awgn(signal: FloatArray, noise_power: float, bandwidth: float,
     n = signal.size
     freqs = np.fft.rfftfreq(n, d=1.0 / sample_rate)
     spectrum = np.fft.rfft(raw_noise)
-    cutoff = min(bandwidth, sample_rate / 2)
-    mask = freqs <= cutoff
+    half_bw = min(bandwidth / 2.0, sample_rate / 2)
+    mask = (freqs >= -half_bw) & (freqs <= half_bw)
     if not np.any(mask):
         return signal
     spectrum[~mask] = 0
